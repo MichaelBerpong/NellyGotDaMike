@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Find Your Seat</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body, html {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    /* Slideshow container */
+    .slideshow {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    .slideshow img {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    }
+
+    .slideshow img.active {
+      opacity: 1;
+    }
+
+    .container {
+      position: relative;
+      padding: 30px;
+      text-align: center;
+      width: 90%;
+      max-width: 500px;
+      margin: auto;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    h1, h2, p {
+      color: white;
+      font-weight: bold;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+    }
+
+    input, select {
+      padding: 12px;
+      width: 100%;
+      font-size: 16px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background: white;
+      color: black;
+      font-weight: normal;
+    }
+
+    #seatInfo {
+      font-size: 18px;
+      font-weight: bold;
+      color: #2e7d32;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Background Slideshow -->
+  <div class="slideshow">
+    <img src="prewedding1.jpg" class="active" alt="Prewedding 1" />
+    <img src="prewedding2.jpg" alt="Prewedding 2" />
+    <img src="prewedding3.jpg" alt="Prewedding 3" />
+  </div>
+
+  <div class="container">
+    <h1>Welcome to the Wedding of Michael & Nelly</h1>
+    <h2>Find Your Seat</h2>
+    <p>Start typing your name (first or last) to find your seat assignment.</p>
+    <input type="text" id="searchBox" placeholder="Enter your name..." />
+    <select id="guestDropdown" size="5"></select>
+    <p id="seatInfo"></p>
+  </div>
+
+  <script>
+    // Slideshow logic
+    const slides = document.querySelectorAll(".slideshow img");
+    let current = 0;
+    setInterval(() => {
+      slides[current].classList.remove("active");
+      current = (current + 1) % slides.length;
+      slides[current].classList.add("active");
+    }, 4000); // Change image every 4 seconds
+
+    // Guest search logic
+    const guests = [
+      { name: "Mr. Richmond Acheampong", seat: "Table 1" },
+      { name: "Mr. Isaac Appiah", seat: "Table 1" },
+      { name: "Mr. Gabriel Awuah", seat: "Table 1" },
+      { name: "Mr. Emmanuel Danquah", seat: "Table 1" },
+      { name: "Mr. Lawrence Fianko", seat: "Table 1" },
+      { name: "Mr. Samuel Frempong", seat: "Table 1" },
+      { name: "Mr. Perry Donkor", seat: "Table 1" },
+      { name: "Mr. Derrick Arthur", seat: "Table 1" },
+      { name: "Ms Roxette Danquah", seat: "Table 1" },
+      { name: "Ms Nana Bonsu", seat: "Table 1" },
+      { name: "Ms. Precious Iyamu", seat: "Table 2" },
+      { name: "Ms. Success Asemota", seat: "Table 2" },
+      { name: "Ms. Bridgette Mensah", seat: "Table 2" },
+      { name: "Mr. Christian Sarpong", seat: "Table 2" },
+      { name: "Ms. Chiamaka Obadike", seat: "Table 2" },
+      { name: "Ms. Faustina Obeng", seat: "Table 2" },
+      { name: "Mrs. Myrlande Xavier", seat: "Table 2" },
+      { name: "Ms. Margaret Boamah", seat: "Table 2" },
+      { name: "Mrs. Gifty Boamah", seat: "Table 2" },
+      { name: "Mr Kweku Obeng", seat: "Table 2" },
+      { name: "Mr Alexander Sekyere", seat: "Table 3" },
+      { name: "Mrs. Merab Darkwa", seat: "Table 3" },
+      { name: "Mr Kwame Sekyere", seat: "Table 3" },
+      { name: "Mrs. Comfort Adjei-Mensah", seat: "Table 3" },
+      { name: "Mr. William Agyei-Mensah", seat: "Table 3" },
+      { name: "Mr. Prince Darkwa", seat: "Table 3" },
+      { name: "Mrs. Deborah Morales", seat: "Table 3" },
+      { name: "Mr. William Morales", seat: "Table 3" },
+      { name: "Dr. Benjamin Agyare", seat: "Table 3" },
+      { name: "Mrs. Ivy Atiemo", seat: "Table 3" },
+      { name: "Mr Victor Agyen", seat: "Table 4" },
+      { name: "Ms. Victoria Anochi", seat: "Table 4" },
+      { name: "Mr. Kwabena Anochi", seat: "Table 4" },
+      { name: "Ms. Abigail Amankwah-Addo", seat: "Table 4" },
+      { name: "Mr. Nana Yaw Brobbey-Mpiani", seat: "Table 4" },
+      { name: "Mr Evans Obeng", seat: "Table 4" },
+      { name: "Ms. Eva Danso", seat: "Table 4" },
+      { name: "Mr. Daniel Anokye", seat: "Table 4" },
+      { name: "Ms. Josephine Anokye", seat: "Table 4" },
+      { name: "Ms. Helena Arthur", seat: "Table 4" },
+      { name: "Mr Fred Appiah", seat: "Table 5" },
+      { name: "Mrs Evelyn Awuah", seat: "Table 5" },
+      { name: "Ms Cecilia Amoah", seat: "Table 5" },
+      { name: "Ms Janice Arthur", seat: "Table 5" },
+      { name: "Ms Roselyn Okyere", seat: "Table 5" },
+      { name: "Mr Robert Odoi", seat: "Table 5" },
+      { name: "Mrs Esther Odoi", seat: "Table 5" },
+      { name: "Ms Theresa Owusu", seat: "Table 5" },
+      { name: "Mr Ansong Somuah", seat: "Table 5" },
+      { name: "Mr Alex Darkwa", seat: "Table 5" },
+      { name: "Mr. Yaw Amoah", seat: "Table 6" },
+      { name: "Mr. Sanni Amadu Agbesi", seat: "Table 6" },
+      { name: "Mr. Stephen Okletey", seat: "Table 6" },
+      { name: "Mr. Mark Apah", seat: "Table 6" },
+      { name: "Ms Abigail Apah", seat: "Table 6" },
+      { name: "Ms Princess Addison", seat: "Table 6" },
+      { name: "Ms. Maame Afia Ampofo", seat: "Table 6" },
+      { name: "Mr. Zenas Koranteng-Mensah", seat: "Table 6" },
+      { name: "Mr. Nana Asafu-Adjaye", seat: "Table 6" },
+      { name: "Mr Agyei Afriyie", seat: "Table 6" },
+      { name: "Pastor Nana Bentil", seat: "Table 7" },
+      { name: "Mrs. Nana Bentil", seat: "Table 7" },
+      { name: "Captain Emmanuel Nyarko", seat: "Table 7" },
+      { name: "Ms Abigail Yartey", seat: "Table 7" },
+      { name: "Dr. Portia Nyarko", seat: "Table 7" },
+      { name: "Mrs. Dinah Osei", seat: "Table 7" },
+      { name: "Mr. Smart Osafo", seat: "Table 7" },
+      { name: "Dr. Comfort Quaye", seat: "Table 7" },
+      { name: "Mr. Wilfred Quaye", seat: "Table 7" },
+      { name: "Mr. Emmauel Nyarko", seat: "Table 7" },
+      { name: "Mr. Jason Salvador", seat: "Table 8" },
+      { name: "Mr. Obinna Ebichi", seat: "Table 8" },
+      { name: "Ms Winifred Asante", seat: "Table 8" },
+      { name: "Mr. Jorge Tardey", seat: "Table 8" },
+      { name: "Mr. John David Otoo", seat: "Table 8" },
+      { name: "Mr. Chacier Alexander", seat: "Table 8" },
+      { name: "Mr. Sammy Baah", seat: "Table 8" },
+      { name: "Mr. Jacob Alvarez", seat: "Table 8" },
+      { name: "Ms. Jennifer Martinez", seat: "Table 8" },
+      { name: "Mr. Justin Akwetey", seat: "Table 8" },
+      { name: "Ms. Shonette Akwetey", seat: "Table 9" },
+      { name: "Ms. Pearl Dery", seat: "Table 9" },
+      { name: "Ms. Onika Hendricks", seat: "Table 9" },
+      { name: "Mr. Nick Aidoo Mensah", seat: "Table 9" },
+      { name: "Mr. Kofi Boahen", seat: "Table 9" },
+      { name: "Prof Ebenezer Yiadom", seat: "Table 9" },
+      { name: "Mr Ibn Timmons", seat: "Table 9" },
+      { name: "Ms. Shazia Long", seat: "Table 9" },
+      { name: "Mr. Samuel Afriyie", seat: "Table 9" },
+      { name: "Mr. Derick Agyemang Duah", seat: "Table 9" },
+      { name: "Mr. Clinton Asiamah", seat: "Table 10" },
+      { name: "Mr. Rosby Asiamah", seat: "Table 10" },
+      { name: "Ms. Tiffany Adu-Poku", seat: "Table 10" },
+      { name: "Mr. Kojo Boateng", seat: "Table 10" },
+      { name: "Mr. Yaw Agyemang", seat: "Table 10" },
+      { name: "Dr Manuel Kwadwo Duah", seat: "Table 10" },
+      { name: "Mr. Kofi Obotan Amankwah", seat: "Table 10" },
+      { name: "Ms. Cindy Opoku", seat: "Table 10" },
+      { name: "Mrs. Mavis Boamah", seat: "Table 10" },
+      { name: "Mrs. Hilda Boamah", seat: "Table 10" },
+      { name: "Mr. Clearson Xavier", seat: "Table 11" },
+      { name: "Mr. Uyi Emmanuel", seat: "Table 11" },
+      { name: "Mr. Obinna Obialor", seat: "Table 11" },
+      { name: "Mr. Uyi Ehioba", seat: "Table 11" },
+      { name: "Mr. Osasu Eboh", seat: "Table 11" },
+      { name: "Ms. Nosa Osagie", seat: "Table 11" },
+      { name: "Ms. Abby Ashade", seat: "Table 11" },
+      { name: "Mrs. Laurel Iyamu", seat: "Table 11" },
+      { name: "Mr. Kelly Iyamu", seat: "Table 11" },
+      { name: "Mr. Abiodun Ashade", seat: "Table 11" },
+      { name: "Ms. Ange Charles", seat: "Table 12" },
+      { name: "Ms. Marie Genelus", seat: "Table 12" },
+      { name: "Mrs. Jennifer Ampofo Boateng", seat: "Table 12" },
+      { name: "Mr. Daniel Boateng", seat: "Table 12" },
+      { name: "Mr. Christopher Amponsah", seat: "Table 12" },
+      { name: "Mrs. Janet Afoakwah", seat: "Table 12" },
+      { name: "Mr. Richard Ansah", seat: "Table 12" },
+      { name: "Mr. Nii Ashittey", seat: "Table 12" },
+      { name: "Ms. Jennifer Boamah", seat: "Table 12" },
+      { name: "Ms. Akpene Simpri", seat: "Table 12" },
+      { name: "Mrs. Elizabeth Arkoh", seat: "Table 13" },
+      { name: "Ms Regina Lassey", seat: "Table 13" },
+      { name: "Mrs. Ruth Essumang", seat: "Table 13" },
+      { name: "Mr. Solomon Essumang", seat: "Table 13" },
+      { name: "Mrs. Miranda Ashley", seat: "Table 13" },
+      { name: "Mr. Curtis Kofi-Hene", seat: "Table 13" },
+      { name: "Mrs. Germanie Germain", seat: "Table 13" },
+      { name: "Mr Fred Kevin Denis", seat: "Table 13" },
+      { name: "Mr. Lynzine McCalmon", seat: "Table 13" },
+      { name: "Ms. Ange Dorelien", seat: "Table 13" },
+      { name: "Mr. Kevin Berpong", seat: "Table 14" },
+      { name: "Ms. Nadia Berpong", seat: "Table 14" },
+      { name: "Mr. Derrick Berpong", seat: "Table 14" },
+      { name: "Ms. Mercy Sekyere", seat: "Table 14" },
+      { name: "Mr. Isreal Darkwa", seat: "Table 14" },
+      { name: "Mr. Prince Darkwa", seat: "Table 14" },
+      { name: "Ms. Nana Akua Okeyere", seat: "Table 14" },
+      { name: "Ms. Angel Arthur", seat: "Table 14" },
+      { name: "Mrs. Clementina Darkwa", seat: "Table 14" },
+      { name: "Mrs. Atim Kakou", seat: "Table 14" }
+    ];
+
+    const searchBox = document.getElementById("searchBox");
+    const guestDropdown = document.getElementById("guestDropdown");
+    const seatInfo = document.getElementById("seatInfo");
+
+    let debounceTimer;
+
+    function updateDropdown(filter = "") {
+      guestDropdown.innerHTML = "";
+
+      const query = filter.trim().toLowerCase();
+      if (!query) return;
+
+      const matches = guests.filter(g =>
+        g.name.toLowerCase().includes(query)
+      );
+
+      matches.forEach(g => {
+        const option = document.createElement("option");
+        option.value = g.name;
+        option.text = g.name;
+        guestDropdown.appendChild(option);
+      });
+    }
+
+    searchBox.addEventListener("input", () => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        updateDropdown(searchBox.value);
+        seatInfo.textContent = "";
+      }, 200);
+    });
+
+    guestDropdown.addEventListener("change", () => {
+      const selected = guests.find(g => g.name === guestDropdown.value);
+      seatInfo.textContent = selected
+        ? `You are seated at: ${selected.seat}`
+        : "";
+    });
+
+    updateDropdown();
+  </script>
+</body>
+</html>
